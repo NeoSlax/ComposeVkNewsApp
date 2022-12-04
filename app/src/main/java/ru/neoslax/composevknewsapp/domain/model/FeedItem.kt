@@ -3,6 +3,7 @@ package ru.neoslax.composevknewsapp.domain.model
 import ru.neoslax.composevknewsapp.R
 
 data class FeedItem(
+    val id: Int = 0,
     val postItemLogo: Int = R.drawable.post_comunity_thumbnail,
     val postTitle: String = "/dev/null",
     val postTime: String = "14:00",

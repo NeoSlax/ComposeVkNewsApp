@@ -2,9 +2,7 @@ package ru.neoslax.composevknewsapp.ui.view
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Card
@@ -15,28 +13,24 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
-import ru.neoslax.composevknewsapp.R
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import ru.neoslax.composevknewsapp.R
 import ru.neoslax.composevknewsapp.domain.model.FeedItem
 import ru.neoslax.composevknewsapp.domain.model.ItemType
 import ru.neoslax.composevknewsapp.domain.model.StatisticsItem
-import ru.neoslax.composevknewsapp.ui.data.NavigationItems
-import ru.neoslax.composevknewsapp.ui.theme.ComposeVkNewsAppTheme
 
 @Composable
 fun NewsCard(
     modifier: Modifier = Modifier,
     feedItem: FeedItem,
-    onViewItemClick: (StatisticsItem) -> Unit,
-    onRepostsItemClick: (StatisticsItem) -> Unit,
-    onCommentsItemClick: (StatisticsItem) -> Unit,
-    onLikesItemClick: (StatisticsItem) -> Unit
+    onViewItemClick: (FeedItem, StatisticsItem) -> Unit,
+    onRepostsItemClick: (FeedItem, StatisticsItem) -> Unit,
+    onCommentsItemClick: (FeedItem, StatisticsItem) -> Unit,
+    onLikesItemClick: (FeedItem, StatisticsItem) -> Unit
 ) {
 
     Card(modifier = modifier) {
@@ -72,10 +66,10 @@ fun NewsCard(
             Spacer(modifier = Modifier.height(8.dp))
             Statistics(
                 items = feedItem.postStatistics,
-                onViewItemClick = onViewItemClick,
-                onRepostsItemClick = onRepostsItemClick,
-                onCommentsItemClick = onCommentsItemClick,
-                onLikesItemClick = onLikesItemClick
+                onViewItemClick = { onViewItemClick(feedItem, it) },
+                onRepostsItemClick = { onRepostsItemClick(feedItem, it) },
+                onCommentsItemClick = { onCommentsItemClick(feedItem, it) },
+                onLikesItemClick = { onLikesItemClick(feedItem, it) }
             )
         }
     }
