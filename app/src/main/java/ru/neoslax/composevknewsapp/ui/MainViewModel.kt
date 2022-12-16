@@ -5,7 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import ru.neoslax.composevknewsapp.domain.model.FeedItem
 import ru.neoslax.composevknewsapp.domain.model.StatisticsItem
-import ru.neoslax.composevknewsapp.ui.data.NavigationItems
 
 class MainViewModel : ViewModel() {
 
@@ -18,12 +17,6 @@ class MainViewModel : ViewModel() {
     private val _feedItems = MutableLiveData(list.toList())
     val feedItems: LiveData<List<FeedItem>> = _feedItems
 
-    private val _navigation = MutableLiveData<NavigationItems>(NavigationItems.Main)
-    val navigation: LiveData<NavigationItems> = _navigation
-
-    fun updateNavigation(navItem: NavigationItems) {
-        _navigation.value = navItem
-    }
 
     fun updateCounter(feedItem: FeedItem, statisticsItem: StatisticsItem) {
         val feedList = requireNotNull(feedItems.value).toMutableList()

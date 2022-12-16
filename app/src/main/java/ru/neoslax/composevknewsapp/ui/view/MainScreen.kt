@@ -3,9 +3,11 @@ package ru.neoslax.composevknewsapp.ui.view
 import androidx.compose.foundation.clickable
 import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import ru.neoslax.composevknewsapp.navigation.AppNavGraph
 import ru.neoslax.composevknewsapp.ui.HomeScreen
 import ru.neoslax.composevknewsapp.ui.MainViewModel
 import ru.neoslax.composevknewsapp.ui.data.NavigationItems
@@ -13,11 +15,13 @@ import ru.neoslax.composevknewsapp.ui.data.NavigationItems
 @Composable
 fun MainScreen(viewModel: MainViewModel) {
 
-    val selectedNavItem by viewModel.navigation.observeAsState(initial = NavigationItems.Main)
+    val navHostController = rememberNavController()
 
     Scaffold(
         bottomBar = {
             BottomAppBar {
+                val navBackStackEntry by navHostController.currentBackStackEntryAsState()
+                val currentRoute = navBackStackEntry?.destination?.route
                 val items = listOf(
                     NavigationItems.Main,
                     NavigationItems.Favourites,
@@ -25,9 +29,10 @@ fun MainScreen(viewModel: MainViewModel) {
                 )
                 items.forEach { item ->
                     BottomNavigationItem(
-                        selected = item == selectedNavItem,
+                        modifier = Modifier.weight(1f),
+                        selected = item.screen.route == currentRoute,
                         onClick = {
-                            viewModel.updateNavigation(item)
+                                  navHostController.navigate(item.screen.route)
                         },
                         icon = {
                             Icon(imageVector = item.icon, contentDescription = null)
@@ -39,13 +44,12 @@ fun MainScreen(viewModel: MainViewModel) {
                 }
             }
         }
-    ) {
-        val selectedNav = viewModel.navigation.observeAsState(NavigationItems.Main)
-        when (selectedNav.value) {
-            NavigationItems.Favourites -> Counter(text = "Fav")
-            NavigationItems.Main -> HomeScreen(viewModel = viewModel, paddingValues = it)
-            NavigationItems.Profile -> Counter(text = "Profile")
-        }
+    ) { paddingVal ->
+        AppNavGraph(
+            navHostController = navHostController,
+            homeScreen = { HomeScreen(viewModel = viewModel, paddingValues = paddingVal) },
+            favouriteScreen = { Counter(text = "Fav") },
+            profileScreen = { Counter(text = "Profile") })
     }
 }
 
