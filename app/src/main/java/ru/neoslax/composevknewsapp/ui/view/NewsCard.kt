@@ -29,7 +29,7 @@ fun NewsCard(
     feedItem: FeedItem,
     onViewItemClick: (FeedItem, StatisticsItem) -> Unit,
     onRepostsItemClick: (FeedItem, StatisticsItem) -> Unit,
-    onCommentsItemClick: (FeedItem, StatisticsItem) -> Unit,
+    onCommentsItemClick: (FeedItem) -> Unit,
     onLikesItemClick: (FeedItem, StatisticsItem) -> Unit
 ) {
 
@@ -68,7 +68,7 @@ fun NewsCard(
                 items = feedItem.postStatistics,
                 onViewItemClick = { onViewItemClick(feedItem, it) },
                 onRepostsItemClick = { onRepostsItemClick(feedItem, it) },
-                onCommentsItemClick = { onCommentsItemClick(feedItem, it) },
+                onCommentsItemClick = { onCommentsItemClick(feedItem) },
                 onLikesItemClick = { onLikesItemClick(feedItem, it) }
             )
         }

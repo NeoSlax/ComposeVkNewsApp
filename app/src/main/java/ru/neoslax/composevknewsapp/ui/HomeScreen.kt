@@ -1,5 +1,6 @@
 package ru.neoslax.composevknewsapp.ui
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -17,12 +18,44 @@ import androidx.compose.ui.unit.dp
 import ru.neoslax.composevknewsapp.domain.model.FeedItem
 import ru.neoslax.composevknewsapp.ui.view.NewsCard
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun HomeScreen(viewModel: MainViewModel, paddingValues: PaddingValues) {
 
-    val feedItems = viewModel.feedItems.observeAsState(initial = listOf(FeedItem()))
+    val screenState = viewModel.screenState.observeAsState(initial = HomeScreenState.Initial)
 
+    when (val localState = screenState.value) {
+        is HomeScreenState.Comments -> {
+            CommentsScreen(
+                postId = localState.feedItem.id,
+                commentList = localState.comments,
+                onBackButtonClick = viewModel::onCloseCommentsClick
+            )
+            BackHandler {
+                viewModel.onCloseCommentsClick()
+            }
+        }
+
+        is HomeScreenState.Feed -> {
+            FeedScreen(
+                feedItems = localState.feedItems,
+                paddingValues = paddingValues,
+                viewModel = viewModel
+            )
+        }
+
+        is HomeScreenState.Initial -> {
+
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
+@Composable
+private fun FeedScreen(
+    feedItems: List<FeedItem>,
+    paddingValues: PaddingValues,
+    viewModel: MainViewModel
+) {
     LazyColumn(
         modifier = Modifier.padding(paddingValues),
         contentPadding = PaddingValues(
@@ -33,7 +66,7 @@ fun HomeScreen(viewModel: MainViewModel, paddingValues: PaddingValues) {
         ),
         verticalArrangement = Arrangement.spacedBy(6.dp)
     ) {
-        items(feedItems.value, key = { it.id }) {
+        items(feedItems, key = { it.id }) {
             val swipeToDismissState = rememberDismissState()
             SwipeToDismiss(
                 modifier = Modifier.animateItemPlacement(),
@@ -48,7 +81,7 @@ fun HomeScreen(viewModel: MainViewModel, paddingValues: PaddingValues) {
                     feedItem = it,
                     onViewItemClick = viewModel::updateCounter,
                     onRepostsItemClick = viewModel::updateCounter,
-                    onCommentsItemClick = viewModel::updateCounter,
+                    onCommentsItemClick = viewModel::onCommentButtonClicked,
                     onLikesItemClick = viewModel::updateCounter,
                 )
             }
