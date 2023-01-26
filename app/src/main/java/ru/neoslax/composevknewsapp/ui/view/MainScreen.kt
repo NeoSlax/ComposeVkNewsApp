@@ -14,9 +14,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
 import ru.neoslax.composevknewsapp.navigation.AppNavGraph
-import ru.neoslax.composevknewsapp.navigation.Screen
+import ru.neoslax.composevknewsapp.navigation.rememberNavState
 import ru.neoslax.composevknewsapp.ui.HomeScreen
 import ru.neoslax.composevknewsapp.ui.MainViewModel
 import ru.neoslax.composevknewsapp.ui.data.NavigationItems
@@ -24,12 +23,12 @@ import ru.neoslax.composevknewsapp.ui.data.NavigationItems
 @Composable
 fun MainScreen(viewModel: MainViewModel) {
 
-    val navHostController = rememberNavController()
+    val navigationState = rememberNavState()
 
     Scaffold(
         bottomBar = {
             BottomAppBar {
-                val navBackStackEntry by navHostController.currentBackStackEntryAsState()
+                val navBackStackEntry by navigationState.navHostController.currentBackStackEntryAsState()
                 val currentRoute = navBackStackEntry?.destination?.route
                 val items = listOf(
                     NavigationItems.Main,
@@ -41,13 +40,7 @@ fun MainScreen(viewModel: MainViewModel) {
                         modifier = Modifier.weight(1f),
                         selected = item.screen.route == currentRoute,
                         onClick = {
-                            navHostController.navigate(item.screen.route) {
-                                popUpTo(Screen.NewsFeed.route) {
-                                    saveState = true
-                                }
-                                launchSingleTop = true
-                                restoreState = true
-                            }
+                            navigationState.navigateTo(item.screen.route)
                         },
                         icon = {
                             Icon(imageVector = item.icon, contentDescription = null)
@@ -61,7 +54,7 @@ fun MainScreen(viewModel: MainViewModel) {
         }
     ) { paddingVal ->
         AppNavGraph(
-            navHostController = navHostController,
+            navHostController = navigationState.navHostController,
             homeScreen = { HomeScreen(viewModel = viewModel, paddingValues = paddingVal) },
             favouriteScreen = { Counter(text = "Fav") },
             profileScreen = { Counter(text = "Profile") })
