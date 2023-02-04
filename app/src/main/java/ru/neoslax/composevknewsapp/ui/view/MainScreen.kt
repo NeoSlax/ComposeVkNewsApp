@@ -1,29 +1,27 @@
 package ru.neoslax.composevknewsapp.ui.view
 
 import androidx.compose.foundation.clickable
-import androidx.compose.material.BottomAppBar
-import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material.Icon
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.material.*
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.compose.currentBackStackEntryAsState
+import ru.neoslax.composevknewsapp.domain.model.FeedItem
 import ru.neoslax.composevknewsapp.navigation.AppNavGraph
 import ru.neoslax.composevknewsapp.navigation.rememberNavState
+import ru.neoslax.composevknewsapp.ui.CommentsScreen
 import ru.neoslax.composevknewsapp.ui.HomeScreen
-import ru.neoslax.composevknewsapp.ui.MainViewModel
 import ru.neoslax.composevknewsapp.ui.data.NavigationItems
 
 @Composable
-fun MainScreen(viewModel: MainViewModel) {
+fun MainScreen() {
 
     val navigationState = rememberNavState()
+
+    val commentsToPost: MutableState<FeedItem?> = remember {
+        mutableStateOf(null)
+    }
 
     Scaffold(
         bottomBar = {
@@ -55,7 +53,18 @@ fun MainScreen(viewModel: MainViewModel) {
     ) { paddingVal ->
         AppNavGraph(
             navHostController = navigationState.navHostController,
-            homeScreen = { HomeScreen(viewModel = viewModel, paddingValues = paddingVal) },
+            homeScreen = {
+                if (commentsToPost.value == null)
+                    HomeScreen(paddingValues = paddingVal, onCommentsClickListener = {
+                        commentsToPost.value = it
+                    }) else {
+                    CommentsScreen(
+                        feedItem = commentsToPost.value!!
+                    ) {
+                        commentsToPost.value = null
+                    }
+                }
+            },
             favouriteScreen = { Counter(text = "Fav") },
             profileScreen = { Counter(text = "Profile") })
     }

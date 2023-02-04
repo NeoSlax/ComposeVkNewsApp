@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import ru.neoslax.composevknewsapp.domain.model.FeedItem
-import ru.neoslax.composevknewsapp.domain.model.PostComment
 import ru.neoslax.composevknewsapp.domain.model.StatisticsItem
 
 class MainViewModel : ViewModel() {
@@ -15,29 +14,14 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    val localComments = mutableListOf<PostComment>().apply {
-        repeat(10) {
-            add(PostComment(it))
-        }
-    }
+    private val initialState: FeedScreenState.Feed = FeedScreenState.Feed(feedItemsList)
 
-    private val initialState: HomeScreenState.Feed = HomeScreenState.Feed(feedItemsList)
+    private val _screenState = MutableLiveData<FeedScreenState>(initialState)
+    val screenState: LiveData<FeedScreenState> = _screenState
 
-    private val _screenState = MutableLiveData<HomeScreenState>(initialState)
-    val screenState: LiveData<HomeScreenState> = _screenState
-
-    private var previousScreenState: HomeScreenState? = initialState
-    fun onCommentButtonClicked(feedItem: FeedItem) {
-        previousScreenState = screenState.value
-        _screenState.value = HomeScreenState.Comments(feedItem, localComments)
-    }
-
-    fun onCloseCommentsClick() {
-        _screenState.value = previousScreenState
-    }
     fun updateCounter(feedItem: FeedItem, statisticsItem: StatisticsItem) {
         val currentState = screenState.value
-        if (currentState !is HomeScreenState.Feed) return
+        if (currentState !is FeedScreenState.Feed) return
         val feedList = requireNotNull(currentState.feedItems).toMutableList()
         val oldStats = feedItem.postStatistics
         val newStats = oldStats.toMutableList().apply {
@@ -56,15 +40,15 @@ class MainViewModel : ViewModel() {
                 it
             }
         }
-        _screenState.value = HomeScreenState.Feed(feedItems = feedList)
+        _screenState.value = FeedScreenState.Feed(feedItems = feedList)
     }
 
     fun deleteItem(feedItem: FeedItem) {
         val currentState = screenState.value
-        if (currentState !is HomeScreenState.Feed) return
+        if (currentState !is FeedScreenState.Feed) return
         val feedList = requireNotNull(currentState.feedItems).toMutableList()
         feedList.remove(feedItem)
-        _screenState.value = HomeScreenState.Feed(feedItems = feedList)
+        _screenState.value = FeedScreenState.Feed(feedItems = feedList)
 
     }
 }

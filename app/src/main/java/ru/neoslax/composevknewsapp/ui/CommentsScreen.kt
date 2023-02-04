@@ -20,37 +20,47 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import ru.neoslax.composevknewsapp.CommentsViewModelFactory
+import ru.neoslax.composevknewsapp.domain.model.FeedItem
 import ru.neoslax.composevknewsapp.domain.model.PostComment
 import ru.neoslax.composevknewsapp.ui.theme.ComposeVkNewsAppTheme
 
 @Composable
 fun CommentsScreen(
-    postId: Int,
-    commentList: List<PostComment>,
+    feedItem: FeedItem,
     onBackButtonClick: () -> Unit
 ) {
-    Scaffold(topBar = {
-        TopAppBar(title = {
-            Text(text = "Comments for postId: $postId")
-        }, navigationIcon = {
-            IconButton(onClick = onBackButtonClick) {
-                Icon(
-                    imageVector = Icons.Default.ArrowBack, contentDescription = null
+    val viewModel: CommentsViewModel = viewModel(factory = CommentsViewModelFactory(feedItem))
+    val screenState = viewModel.screenState.observeAsState(CommentsScreenState.Initial)
+    val currentState = screenState.value
+
+   if (currentState is CommentsScreenState.Comments) {
+
+        Scaffold(topBar = {
+            TopAppBar(title = {
+                Text(text = "Comments for postId: ${currentState.comments}")
+            }, navigationIcon = {
+                IconButton(onClick = onBackButtonClick) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack, contentDescription = null
+                    )
+                }
+            })
+        }) { paddingValues ->
+            LazyColumn(
+                modifier = Modifier.padding(paddingValues), contentPadding = PaddingValues(
+                    top = 16.dp, start = 8.dp, end = 8.dp, bottom = 72.dp
                 )
-            }
-        })
-    }) { paddingValues ->
-        LazyColumn(
-            modifier = Modifier.padding(paddingValues), contentPadding = PaddingValues(
-                top = 16.dp, start = 8.dp, end = 8.dp, bottom = 72.dp
-            )
-        ) {
-            items(items = commentList, key = { it.id }) {
-                CommentItem(content = it)
+            ) {
+                items(items = currentState.comments, key = { it.id }) {
+                    CommentItem(content = it)
+                }
             }
         }
     }
