@@ -15,7 +15,7 @@ sealed class NavigationItems(
     @StringRes val label: Int,
 ) {
     object Main : NavigationItems(
-        screen = Screen.NewsFeed,
+        screen = Screen.Home,
         icon = Icons.Filled.Home,
         label = R.string.navigation_label_home
     )

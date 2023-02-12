@@ -2,12 +2,15 @@ package ru.neoslax.composevknewsapp.ui.view
 
 import androidx.compose.foundation.clickable
 import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
-import ru.neoslax.composevknewsapp.domain.model.FeedItem
 import ru.neoslax.composevknewsapp.navigation.AppNavGraph
 import ru.neoslax.composevknewsapp.navigation.rememberNavState
 import ru.neoslax.composevknewsapp.ui.CommentsScreen
@@ -19,26 +22,26 @@ fun MainScreen() {
 
     val navigationState = rememberNavState()
 
-    val commentsToPost: MutableState<FeedItem?> = remember {
-        mutableStateOf(null)
-    }
-
     Scaffold(
         bottomBar = {
             BottomAppBar {
                 val navBackStackEntry by navigationState.navHostController.currentBackStackEntryAsState()
-                val currentRoute = navBackStackEntry?.destination?.route
                 val items = listOf(
                     NavigationItems.Main,
                     NavigationItems.Favourites,
                     NavigationItems.Profile
                 )
                 items.forEach { item ->
+                    val isSelected = navBackStackEntry?.destination?.hierarchy?.any {
+                        it.route == item.screen.route
+                    } ?: false
                     BottomNavigationItem(
                         modifier = Modifier.weight(1f),
-                        selected = item.screen.route == currentRoute,
+                        selected = isSelected,
                         onClick = {
-                            navigationState.navigateTo(item.screen.route)
+                            if (!isSelected) {
+                                navigationState.navigateTo(item.screen.route)
+                            }
                         },
                         icon = {
                             Icon(imageVector = item.icon, contentDescription = null)
@@ -53,20 +56,21 @@ fun MainScreen() {
     ) { paddingVal ->
         AppNavGraph(
             navHostController = navigationState.navHostController,
-            homeScreen = {
-                if (commentsToPost.value == null)
-                    HomeScreen(paddingValues = paddingVal, onCommentsClickListener = {
-                        commentsToPost.value = it
-                    }) else {
-                    CommentsScreen(
-                        feedItem = commentsToPost.value!!
-                    ) {
-                        commentsToPost.value = null
-                    }
-                }
+            newsFeedScreenContent = {
+                HomeScreen(paddingValues = paddingVal,
+                    onCommentsClickListener = { feedItem ->
+                        navigationState.navigateToComments(feedItem)
+                    })
             },
             favouriteScreen = { Counter(text = "Fav") },
-            profileScreen = { Counter(text = "Profile") })
+            profileScreen = { Counter(text = "Profile") },
+            commentsScreenContent = { feedItem ->
+                CommentsScreen(
+                    feedItem = feedItem,
+                ) {
+                    navigationState.navHostController.popBackStack()
+                }
+            })
     }
 }
 
