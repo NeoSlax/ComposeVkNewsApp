@@ -1,10 +1,11 @@
-package ru.neoslax.composevknewsapp.ui
+package ru.neoslax.composevknewsapp.presentation.main
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import ru.neoslax.composevknewsapp.domain.model.FeedItem
 import ru.neoslax.composevknewsapp.domain.model.StatisticsItem
+import ru.neoslax.composevknewsapp.presentation.news.FeedScreenState
 
 class MainViewModel : ViewModel() {
 

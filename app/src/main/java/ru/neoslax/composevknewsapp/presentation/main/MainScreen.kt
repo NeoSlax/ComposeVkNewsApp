@@ -13,9 +13,9 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
 import ru.neoslax.composevknewsapp.navigation.AppNavGraph
 import ru.neoslax.composevknewsapp.navigation.rememberNavState
-import ru.neoslax.composevknewsapp.ui.CommentsScreen
-import ru.neoslax.composevknewsapp.ui.HomeScreen
-import ru.neoslax.composevknewsapp.ui.data.NavigationItems
+import ru.neoslax.composevknewsapp.presentation.comments.CommentsScreen
+import ru.neoslax.composevknewsapp.presentation.news.FeedScreen
+import ru.neoslax.composevknewsapp.presentation.main.NavigationItems
 
 @Composable
 fun MainScreen() {
@@ -57,7 +57,7 @@ fun MainScreen() {
         AppNavGraph(
             navHostController = navigationState.navHostController,
             newsFeedScreenContent = {
-                HomeScreen(paddingValues = paddingVal,
+                FeedScreen(paddingValues = paddingVal,
                     onCommentsClickListener = { feedItem ->
                         navigationState.navigateToComments(feedItem)
                     })

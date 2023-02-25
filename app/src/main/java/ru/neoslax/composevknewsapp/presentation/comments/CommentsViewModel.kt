@@ -1,4 +1,4 @@
-package ru.neoslax.composevknewsapp.ui
+package ru.neoslax.composevknewsapp.presentation.comments
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

@@ -1,4 +1,4 @@
-package ru.neoslax.composevknewsapp.ui
+package ru.neoslax.composevknewsapp.presentation.news
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
@@ -16,10 +16,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.neoslax.composevknewsapp.domain.model.FeedItem
-import ru.neoslax.composevknewsapp.ui.view.NewsCard
+import ru.neoslax.composevknewsapp.presentation.main.MainViewModel
 
 @Composable
-fun HomeScreen(
+fun FeedScreen(
     paddingValues: PaddingValues,
     onCommentsClickListener: (FeedItem) -> Unit
 ) {

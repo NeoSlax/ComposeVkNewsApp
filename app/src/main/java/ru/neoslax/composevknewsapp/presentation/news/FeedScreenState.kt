@@ -1,4 +1,4 @@
-package ru.neoslax.composevknewsapp.ui
+package ru.neoslax.composevknewsapp.presentation.news
 
 import ru.neoslax.composevknewsapp.domain.model.FeedItem
 

@@ -1,4 +1,4 @@
-package ru.neoslax.composevknewsapp.ui.view
+package ru.neoslax.composevknewsapp.presentation.news
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image

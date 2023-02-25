@@ -1,4 +1,4 @@
-package ru.neoslax.composevknewsapp.ui.data
+package ru.neoslax.composevknewsapp.presentation.main
 
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons

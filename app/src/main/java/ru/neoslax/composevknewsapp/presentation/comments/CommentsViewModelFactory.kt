@@ -1,9 +1,8 @@
-package ru.neoslax.composevknewsapp
+package ru.neoslax.composevknewsapp.presentation.comments
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import ru.neoslax.composevknewsapp.domain.model.FeedItem
-import ru.neoslax.composevknewsapp.ui.CommentsViewModel
 
 class CommentsViewModelFactory(
     private val feedItem: FeedItem

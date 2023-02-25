@@ -1,4 +1,4 @@
-package ru.neoslax.composevknewsapp.ui
+package ru.neoslax.composevknewsapp.presentation.comments
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
@@ -26,7 +26,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import ru.neoslax.composevknewsapp.CommentsViewModelFactory
 import ru.neoslax.composevknewsapp.domain.model.FeedItem
 import ru.neoslax.composevknewsapp.domain.model.PostComment
 import ru.neoslax.composevknewsapp.ui.theme.ComposeVkNewsAppTheme

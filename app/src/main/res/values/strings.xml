@@ -1,4 +1,6 @@
 <resources>
+    <integer name="com_vk_sdk_AppId">51565238</integer>
+
     <string name="app_name">Compose Vk News App</string>
     <string name="navigation_label_home">Главная</string>
     <string name="navigation_label_favourite">Избранное</string>
