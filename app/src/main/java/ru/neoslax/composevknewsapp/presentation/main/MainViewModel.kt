@@ -1,24 +1,43 @@
 package ru.neoslax.composevknewsapp.presentation.main
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.*
+import kotlinx.coroutines.launch
+import ru.neoslax.composevknewsapp.data.repository.NewsRepository
 import ru.neoslax.composevknewsapp.domain.model.FeedItem
 import ru.neoslax.composevknewsapp.domain.model.StatisticsItem
 import ru.neoslax.composevknewsapp.presentation.news.FeedScreenState
 
-class MainViewModel : ViewModel() {
+class MainViewModel(application: Application) : AndroidViewModel(application) {
 
-    val feedItemsList = mutableListOf<FeedItem>().apply {
-        repeat(10) {
-            add(FeedItem(id = it))
+    private val repository = NewsRepository(application)
+
+    private val initialState: FeedScreenState = FeedScreenState.Initial
+
+    private val _screenState = MutableLiveData(initialState)
+
+    val screenState: LiveData<FeedScreenState> = _screenState
+    init {
+        loadRecommendations()
+    }
+
+    private fun loadRecommendations() {
+        viewModelScope.launch {
+            repository.loadData()
+            val data = repository.feedItems
+            val state = FeedScreenState.Feed(data)
+            _screenState.value = state
         }
     }
 
-    private val initialState: FeedScreenState.Feed = FeedScreenState.Feed(feedItemsList)
-
-    private val _screenState = MutableLiveData<FeedScreenState>(initialState)
-    val screenState: LiveData<FeedScreenState> = _screenState
+    fun changeLikeStatus(feedItem: FeedItem) {
+        viewModelScope.launch {
+            repository.changeLikeStatus(feedItem)
+            val data = repository.feedItems
+            val state = FeedScreenState.Feed(data)
+            _screenState.value = state
+        }
+    }
 
     fun updateCounter(feedItem: FeedItem, statisticsItem: StatisticsItem) {
         val currentState = screenState.value

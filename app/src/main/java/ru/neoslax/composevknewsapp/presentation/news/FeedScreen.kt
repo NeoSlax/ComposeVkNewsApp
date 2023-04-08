@@ -79,7 +79,7 @@ private fun FeedScreen(
                     onViewItemClick = viewModel::updateCounter,
                     onRepostsItemClick = viewModel::updateCounter,
                     onCommentsItemClick = onCommentsClickListener,
-                    onLikesItemClick = viewModel::updateCounter,
+                    onLikesItemClick = {feedItem, _ -> viewModel.changeLikeStatus(feedItem) },
                 )
             }
         }

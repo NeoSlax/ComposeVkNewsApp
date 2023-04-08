@@ -7,23 +7,20 @@ import android.os.Parcelable
 import androidx.navigation.NavType
 import com.google.gson.Gson
 import kotlinx.parcelize.Parcelize
-import ru.neoslax.composevknewsapp.R
 
 @Parcelize
 data class FeedItem(
-    val id: Int = 0,
-    val postItemLogo: Int = R.drawable.post_comunity_thumbnail,
-    val postTitle: String = "/dev/null",
-    val postTime: String = "14:00",
-    val postText: String = "",
-    val post: Int = R.drawable.post_content_image,
-    val postStatistics: List<StatisticsItem> = listOf(
-        StatisticsItem(ItemType.VIEWS, 100),
-        StatisticsItem(ItemType.REPOSTS, 100),
-        StatisticsItem(ItemType.COMMENTS, 100),
-        StatisticsItem(ItemType.LIKES, 100),
-    )
+    val id: Long,
+    val avatarUrl: String,
+    val postTitle: String,
+    val postTime: String,
+    val postText: String,
+    val post: String,
+    val postStatistics: List<StatisticsItem>,
+    val isLiked: Boolean,
+    val communityId: Long
 ) : Parcelable {
+
     companion object {
         val feedItemNavType = object : NavType<FeedItem>(false) {
             override fun get(bundle: Bundle, key: String): FeedItem? {

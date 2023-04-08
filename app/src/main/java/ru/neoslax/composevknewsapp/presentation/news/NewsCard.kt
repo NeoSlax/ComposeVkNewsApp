@@ -18,6 +18,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import ru.neoslax.composevknewsapp.R
 import ru.neoslax.composevknewsapp.domain.model.FeedItem
 import ru.neoslax.composevknewsapp.domain.model.ItemType
@@ -36,12 +37,12 @@ fun NewsCard(
     Card(modifier = modifier) {
         Column(modifier = Modifier.padding(6.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Image(
+                AsyncImage(
                     modifier = Modifier
                         .size(48.dp)
                         .clip(CircleShape),
-                    painter = painterResource(id = feedItem.postItemLogo),
-                    contentDescription = ""
+                    model = feedItem.avatarUrl,
+                    contentDescription = null
                 )
                 Spacer(modifier = Modifier.width(6.dp))
                 Column(modifier = Modifier.weight(1f)) {
@@ -55,12 +56,12 @@ fun NewsCard(
                 )
             }
             Spacer(modifier = Modifier.height(8.dp))
-            Image(
+            AsyncImage(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(200.dp),
+                    .wrapContentHeight(),
                 contentScale = ContentScale.FillWidth,
-                painter = painterResource(id = feedItem.post),
+                model = feedItem.post,
                 contentDescription = ""
             )
             Spacer(modifier = Modifier.height(8.dp))
@@ -69,7 +70,8 @@ fun NewsCard(
                 onViewItemClick = { onViewItemClick(feedItem, it) },
                 onRepostsItemClick = { onRepostsItemClick(feedItem, it) },
                 onCommentsItemClick = { onCommentsItemClick(feedItem) },
-                onLikesItemClick = { onLikesItemClick(feedItem, it) }
+                onLikesItemClick = { onLikesItemClick(feedItem, it) },
+                isLiked = feedItem.isLiked
             )
         }
     }
@@ -81,7 +83,8 @@ private fun Statistics(
     onViewItemClick: (StatisticsItem) -> Unit,
     onRepostsItemClick: (StatisticsItem) -> Unit,
     onCommentsItemClick: (StatisticsItem) -> Unit,
-    onLikesItemClick: (StatisticsItem) -> Unit
+    onLikesItemClick: (StatisticsItem) -> Unit,
+    isLiked: Boolean
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -115,7 +118,7 @@ private fun Statistics(
             Counters(
                 onItemClick = { onLikesItemClick(likes) },
                 count = likes.value,
-                drawable = R.drawable.ic_like
+                drawable = if (isLiked) R.drawable.ic_like_set else R.drawable.ic_like
             )
         }
     }
@@ -131,9 +134,26 @@ fun Counters(
     count: Int = 100,
     @DrawableRes drawable: Int = R.drawable.ic_views_count
 ) {
-    Row(modifier = Modifier.clickable(onClick = onItemClick)) {
-        Text(text = count.toString(), color = MaterialTheme.colors.onSecondary)
+    Row(
+        modifier = Modifier.clickable(onClick = onItemClick),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(text = getReadableCountValue(count), color = MaterialTheme.colors.onSecondary)
         Spacer(modifier = Modifier.width(6.dp))
-        Image(painter = painterResource(id = drawable), contentDescription = "")
+        Image(
+            modifier = Modifier.size(20.dp),
+            painter = painterResource(id = drawable),
+            contentDescription = ""
+        )
+    }
+}
+
+private fun getReadableCountValue(input: Int): String {
+    return if (input > 1_000_000) {
+        String.format("%sK", input / 1_000)
+    } else if (input > 1_000) {
+        String.format("%.1fK", input / 1_000f)
+    } else {
+        input.toString()
     }
 }

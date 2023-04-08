@@ -8,10 +8,10 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.vk.api.sdk.VK
 import com.vk.api.sdk.auth.VKScope
+import ru.neoslax.composevknewsapp.presentation.login.LoginScreen
 import ru.neoslax.composevknewsapp.presentation.login.LoginState
 import ru.neoslax.composevknewsapp.presentation.login.LoginViewModel
 import ru.neoslax.composevknewsapp.ui.theme.ComposeVkNewsAppTheme
-import ru.neoslax.composevknewsapp.presentation.login.LoginScreen
 import ru.neoslax.composevknewsapp.ui.view.MainScreen
 
 class MainActivity : ComponentActivity() {
@@ -28,11 +28,12 @@ class MainActivity : ComponentActivity() {
                     onResult = viewModel::login
                 )
 
-                when (loginState.value){
+                when (loginState.value) {
                     is LoginState.Authorized -> MainScreen()
                     is LoginState.NotAuthorized -> LoginScreen {
-                        launcher.launch(listOf(VKScope.WALL))
+                        launcher.launch(listOf(VKScope.WALL, VKScope.FRIENDS))
                     }
+                    LoginState.Initial -> {}
                 }
             }
         }
