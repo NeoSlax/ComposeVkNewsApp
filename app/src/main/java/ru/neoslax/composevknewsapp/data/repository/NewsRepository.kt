@@ -18,6 +18,8 @@ class NewsRepository(val application: Application) {
     val feedItems: List<FeedItem>
         get() = _feedItems.toList()
 
+    private var nextFrom: String? = null
+
 
     private fun getToken(): String {
         val vkApiConfig = VKApiConfig(application)
@@ -27,7 +29,14 @@ class NewsRepository(val application: Application) {
     }
 
     suspend fun loadData() {
-        val response = api.loadNewsFeed(token = getToken())
+        val startFrom = nextFrom
+        if (startFrom == null && feedItems.isNotEmpty()) return
+        val response = if (startFrom != null) {
+            api.loadNewsFeed(token = getToken(), startFrom)
+        } else {
+            api.loadNewsFeed(getToken())
+        }
+        nextFrom = response.response.nextFrom
         _feedItems.addAll(response.toPosts())
     }
 

@@ -25,9 +25,15 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             repository.loadData()
             val data = repository.feedItems
-            val state = FeedScreenState.Feed(data)
+            val state = FeedScreenState.Feed(data, false)
             _screenState.value = state
         }
+    }
+
+    fun loadNextRecomendations() {
+        val state = FeedScreenState.Feed(repository.feedItems, true)
+        _screenState.value = state
+        loadRecommendations()
     }
 
     fun changeLikeStatus(feedItem: FeedItem) {

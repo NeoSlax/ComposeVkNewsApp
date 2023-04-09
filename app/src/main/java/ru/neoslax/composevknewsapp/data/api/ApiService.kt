@@ -13,6 +13,12 @@ interface ApiService {
         @Query("access_token") token: String
     ): VKNewsFeedResponseDto
 
+    @GET("newsfeed.getRecommended?v=5.131")
+    suspend fun loadNewsFeed(
+        @Query("access_token") token: String,
+        @Query("start_from") nextFrom: String
+    ): VKNewsFeedResponseDto
+
 
     @GET("likes.add?v=5.131&type=post")
     suspend fun addLike(

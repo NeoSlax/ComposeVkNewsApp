@@ -11,7 +11,9 @@ class VKResponseDto(
     @SerializedName("items")
     val items: List<PostItemDto>,
     @SerializedName("groups")
-    val groups: List<GroupDto>
+    val groups: List<GroupDto>,
+    @SerializedName("next_from")
+    val nextFrom: String?
 )
 
 data class PostItemDto(

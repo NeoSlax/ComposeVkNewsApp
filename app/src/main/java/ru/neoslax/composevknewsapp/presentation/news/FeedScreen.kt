@@ -1,22 +1,20 @@
 package ru.neoslax.composevknewsapp.presentation.news
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.DismissDirection
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.SwipeToDismiss
-import androidx.compose.material.rememberDismissState
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.neoslax.composevknewsapp.domain.model.FeedItem
 import ru.neoslax.composevknewsapp.presentation.main.MainViewModel
+import ru.neoslax.composevknewsapp.ui.theme.VkMainColor
 
 @Composable
 fun FeedScreen(
@@ -35,12 +33,20 @@ fun FeedScreen(
                 feedItems = localState.feedItems,
                 paddingValues = paddingValues,
                 viewModel = viewModel,
-                onCommentsClickListener = onCommentsClickListener
+                onCommentsClickListener = onCommentsClickListener,
+                isDataLoading = localState.isDataLoading
             )
         }
 
         is FeedScreenState.Initial -> {
-
+            Box(modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .padding(16.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(color = VkMainColor)
+            }
         }
     }
 }
@@ -51,7 +57,8 @@ private fun FeedScreen(
     feedItems: List<FeedItem>,
     paddingValues: PaddingValues,
     viewModel: MainViewModel,
-    onCommentsClickListener: (FeedItem) -> Unit
+    onCommentsClickListener: (FeedItem) -> Unit,
+    isDataLoading: Boolean
 ) {
     LazyColumn(
         modifier = Modifier.padding(paddingValues),
@@ -82,6 +89,23 @@ private fun FeedScreen(
                     onLikesItemClick = {feedItem, _ -> viewModel.changeLikeStatus(feedItem) },
                 )
             }
+        }
+        item {
+            if (isDataLoading) {
+                Box(modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .padding(16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(color = VkMainColor)
+                }
+            } else {
+                SideEffect {
+                    viewModel.loadNextRecomendations()
+                }
+            }
+
         }
     }
 }
