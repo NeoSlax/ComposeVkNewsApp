@@ -10,6 +10,8 @@ import ru.neoslax.composevknewsapp.domain.model.FeedItem
 import ru.neoslax.composevknewsapp.domain.model.ItemType
 import ru.neoslax.composevknewsapp.domain.model.StatisticsItem
 
+private const val SUCCESSFUL_RESPONSE = 1
+
 class NewsRepository(val application: Application) {
 
     private val api = ApiFactory.api
@@ -65,5 +67,21 @@ class NewsRepository(val application: Application) {
         val newItem = feedItem.copy(postStatistics = newStats, isLiked = !feedItem.isLiked)
         val index = _feedItems.indexOf(feedItem)
         _feedItems[index] = newItem
+    }
+
+    suspend fun deleteNewsItem(
+        feedItem: FeedItem
+    ): Boolean {
+        val response = api.deleteNewsItem(
+            token = getToken(),
+            owner_id = feedItem.communityId,
+            item_id = feedItem.id
+        )
+        return if (response.responseCode == SUCCESSFUL_RESPONSE) {
+            _feedItems.remove(feedItem)
+            true
+        } else {
+            false
+        }
     }
 }

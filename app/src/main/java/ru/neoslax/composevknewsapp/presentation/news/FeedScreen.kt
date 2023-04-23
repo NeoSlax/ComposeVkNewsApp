@@ -38,11 +38,12 @@ fun FeedScreen(
             )
         }
 
-        is FeedScreenState.Initial -> {
-            Box(modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .padding(16.dp),
+        is FeedScreenState.Initial -> {}
+
+        is FeedScreenState.Loading -> {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
                 CircularProgressIndicator(color = VkMainColor)
@@ -83,26 +84,25 @@ private fun FeedScreen(
                 }
                 NewsCard(
                     feedItem = it,
-                    onViewItemClick = viewModel::updateCounter,
-                    onRepostsItemClick = viewModel::updateCounter,
                     onCommentsItemClick = onCommentsClickListener,
-                    onLikesItemClick = {feedItem, _ -> viewModel.changeLikeStatus(feedItem) },
+                    onLikesItemClick = { feedItem, _ -> viewModel.changeLikeStatus(feedItem) },
                 )
             }
         }
         item {
             if (isDataLoading) {
-                Box(modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .padding(16.dp),
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                        .padding(16.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     CircularProgressIndicator(color = VkMainColor)
                 }
             } else {
                 SideEffect {
-                    viewModel.loadNextRecomendations()
+                    viewModel.loadNextRecommendation()
                 }
             }
 

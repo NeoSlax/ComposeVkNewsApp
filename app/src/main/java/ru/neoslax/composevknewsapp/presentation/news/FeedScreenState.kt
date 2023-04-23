@@ -6,6 +6,8 @@ sealed class FeedScreenState {
 
     object Initial : FeedScreenState()
 
+    object Loading : FeedScreenState()
+
     data class Feed(val feedItems: List<FeedItem>, val isDataLoading: Boolean = false) : FeedScreenState()
 
 }

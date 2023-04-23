@@ -28,8 +28,6 @@ import ru.neoslax.composevknewsapp.domain.model.StatisticsItem
 fun NewsCard(
     modifier: Modifier = Modifier,
     feedItem: FeedItem,
-    onViewItemClick: (FeedItem, StatisticsItem) -> Unit,
-    onRepostsItemClick: (FeedItem, StatisticsItem) -> Unit,
     onCommentsItemClick: (FeedItem) -> Unit,
     onLikesItemClick: (FeedItem, StatisticsItem) -> Unit
 ) {
@@ -67,8 +65,6 @@ fun NewsCard(
             Spacer(modifier = Modifier.height(8.dp))
             Statistics(
                 items = feedItem.postStatistics,
-                onViewItemClick = { onViewItemClick(feedItem, it) },
-                onRepostsItemClick = { onRepostsItemClick(feedItem, it) },
                 onCommentsItemClick = { onCommentsItemClick(feedItem) },
                 onLikesItemClick = { onLikesItemClick(feedItem, it) },
                 isLiked = feedItem.isLiked
@@ -80,8 +76,6 @@ fun NewsCard(
 @Composable
 private fun Statistics(
     items: List<StatisticsItem>,
-    onViewItemClick: (StatisticsItem) -> Unit,
-    onRepostsItemClick: (StatisticsItem) -> Unit,
     onCommentsItemClick: (StatisticsItem) -> Unit,
     onLikesItemClick: (StatisticsItem) -> Unit,
     isLiked: Boolean
@@ -93,8 +87,8 @@ private fun Statistics(
         Row(modifier = Modifier.weight(1f)) {
             val views = items.getItemByType(ItemType.VIEWS)
             Counters(
-                count = views.value,
-                onItemClick = { onViewItemClick(views) })
+                count = views.value
+            )
         }
 
         Row(
@@ -106,7 +100,6 @@ private fun Statistics(
             val comments = items.getItemByType(ItemType.COMMENTS)
             val likes = items.getItemByType(ItemType.LIKES)
             Counters(
-                onItemClick = { onRepostsItemClick(reposts) },
                 count = reposts.value,
                 drawable = R.drawable.ic_share
             )
@@ -130,12 +123,19 @@ fun List<StatisticsItem>.getItemByType(type: ItemType): StatisticsItem {
 
 @Composable
 fun Counters(
-    onItemClick: () -> Unit,
+    onItemClick: (() -> Unit)? = null,
     count: Int = 100,
     @DrawableRes drawable: Int = R.drawable.ic_views_count
 ) {
+
+    val clickModifier = if (onItemClick == null) {
+        Modifier
+    } else {
+        Modifier.clickable(onClick = onItemClick)
+    }
+
     Row(
-        modifier = Modifier.clickable(onClick = onItemClick),
+        modifier = clickModifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(text = getReadableCountValue(count), color = MaterialTheme.colors.onSecondary)
