@@ -150,9 +150,9 @@ fun Counters(
 
 private fun getReadableCountValue(input: Int): String {
     return if (input > 1_000_000) {
-        String.format("%sK", input / 1_000)
+        String.format("%sk", input / 1_000)
     } else if (input > 1_000) {
-        String.format("%.1fK", input / 1_000f)
+        String.format("%.1fk", input / 1_000f)
     } else {
         input.toString()
     }

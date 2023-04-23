@@ -5,14 +5,16 @@ import android.util.Log
 import com.vk.api.sdk.VKApiConfig
 import com.vk.api.sdk.auth.VKAccessToken
 import ru.neoslax.composevknewsapp.data.api.ApiFactory
+import ru.neoslax.composevknewsapp.data.mapper.mapToComments
 import ru.neoslax.composevknewsapp.data.mapper.toPosts
 import ru.neoslax.composevknewsapp.domain.model.FeedItem
 import ru.neoslax.composevknewsapp.domain.model.ItemType
+import ru.neoslax.composevknewsapp.domain.model.PostComment
 import ru.neoslax.composevknewsapp.domain.model.StatisticsItem
 
 private const val SUCCESSFUL_RESPONSE = 1
 
-class NewsRepository(val application: Application) {
+class NewsRepository(private val application: Application) {
 
     private val api = ApiFactory.api
 
@@ -74,8 +76,8 @@ class NewsRepository(val application: Application) {
     ): Boolean {
         val response = api.deleteNewsItem(
             token = getToken(),
-            owner_id = feedItem.communityId,
-            item_id = feedItem.id
+            ownerId = feedItem.communityId,
+            itemId = feedItem.id
         )
         return if (response.responseCode == SUCCESSFUL_RESPONSE) {
             _feedItems.remove(feedItem)
@@ -83,5 +85,14 @@ class NewsRepository(val application: Application) {
         } else {
             false
         }
+    }
+
+    suspend fun loadComments(feedItem: FeedItem): List<PostComment> {
+        val apiResponse = api.loadComments(
+            token = getToken(),
+            ownerId = feedItem.communityId,
+            postId = feedItem.id
+        )
+        return apiResponse.mapToComments()
     }
 }

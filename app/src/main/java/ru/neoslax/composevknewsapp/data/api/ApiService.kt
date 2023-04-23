@@ -2,6 +2,7 @@ package ru.neoslax.composevknewsapp.data.api
 
 import retrofit2.http.GET
 import retrofit2.http.Query
+import ru.neoslax.composevknewsapp.data.model.CommentsResponseDto
 import ru.neoslax.composevknewsapp.data.model.DeletePostResponseDto
 import ru.neoslax.composevknewsapp.data.model.LikeResponseDto
 import ru.neoslax.composevknewsapp.data.model.VKNewsFeedResponseDto
@@ -38,7 +39,14 @@ interface ApiService {
     @GET("newsfeed.ignoreItem?v=5.131&type=wall")
     suspend fun deleteNewsItem(
         @Query("access_token") token: String,
-        @Query("owner_id") owner_id: Long,
-        @Query("item_id") item_id: Long
+        @Query("owner_id") ownerId: Long,
+        @Query("item_id") itemId: Long
     ): DeletePostResponseDto
+
+    @GET("wall.getComments?v=5.131&extended=1&fields=photo_100")
+    suspend fun loadComments(
+        @Query("access_token") token: String,
+        @Query("owner_id") ownerId: Long,
+        @Query("post_id") postId: Long
+    ): CommentsResponseDto
 }
